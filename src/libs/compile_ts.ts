@@ -8,14 +8,17 @@ interface CompileTsMiddleWareConfig {
 }
 export function compileTs(comfig: CompileTsMiddleWareConfig) {
     return function (req: express.Request, resp: express.Response, next: express.NextFunction) {
-        const relativePath = req.path;
+        let relativePath = req.path;
         const extname = path.extname(relativePath);
         console.log('check ext', extname);
 
-        if (extname !== '.ts') {
+        if (extname == '') {
+            relativePath += '.ts';
+        } else if (extname !== '.ts') {
             return next();
         }
         const filePath = path.join(comfig.root, relativePath);
+        console.log('check file ', filePath);
         if (fs.existsSync(filePath)) {
             fs.readFile(filePath, 'utf8', function (err, source) {
                 if (err) {
@@ -34,7 +37,7 @@ export function compileTs(comfig: CompileTsMiddleWareConfig) {
                 resp.send(result.outputText);
             });
         } else {
-            next(new Error('file not exists:' + filePath));
+            next();
         }
     }
 }

@@ -2,13 +2,15 @@
     "name": "road_condition",
     "version": "0.0.1",
     "devDependencies": {
+        "@types/echarts": "0.0.13",
         "@types/express": "^4.16.0",
+        "@types/jquery": "^3.3.5",
         "@types/morgan": "^1.7.35",
         "@types/request": "^2.47.1",
         "@types/typescript": "^2.0.0"
     },
     "dependencies": {
-        "request" : "2.87.0",
-        "express" : "4.16.3"
+        "request": "2.87.0",
+        "express": "4.16.3"
     }
 }

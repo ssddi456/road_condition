@@ -2,9 +2,9 @@ import * as request from 'request';
 import * as config from '../../config';
 import * as fs from "fs";
 import * as path from "path";
+import { dataDir } from './constant';
 
 const direction_api = 'http://api.map.baidu.com/direction/v2/driving';
-const dataDir = path.join(__dirname, '../../public/data');
 type direction_data = {
     origin: string,
     destination: string,
