@@ -2,7 +2,7 @@ import * as request from 'request';
 import * as config from '../../config';
 import * as fs from "fs";
 import * as path from "path";
-import { dataDir } from './constant';
+import { dataDir, goWorkPrefix, goHomePrefix } from './constant';
 
 const direction_api = 'http://api.map.baidu.com/direction/v2/driving';
 type direction_data = {
@@ -18,35 +18,48 @@ function fix2(str) {
 }
 
 const now = new Date();
-request.get(direction_api,
-    {
-        qs: config as direction_data
-    },
-    function (err, resp, body) {
-        if (err) {
-            console.log('get data faild ', err);
-            return;
-        }
-        const res = JSON.parse(body);
-        const routes = res.result.routes as MapRoute[];
-        const displayRoute = routes.map(directionData);
 
-        fs.writeFile(
-            path.join(dataDir,
-                now.getFullYear() + '-' +
-                fix2(now.getMonth() + 1) + '-' +
-                fix2(now.getDate()) + '_' +
-                fix2(now.getHours()) + '-' +
-                fix2(now.getMinutes()) + '.json'),
+function getDate ( config: direction_data, prefix: string){
+    request.get(direction_api,
+        {
+            qs: config
+        },
+        function (err, resp, body) {
+            if (err) {
+                console.log('get data faild ', err);
+                return;
+            }
+            const res = JSON.parse(body);
+            const routes = res.result.routes as MapRoute[];
+            const displayRoute = routes.map(directionData);
+    
+            fs.writeFile(
+                path.join(dataDir,
+                    prefix + '_' + 
+                    now.getFullYear() + '-' +
+                    fix2(now.getMonth() + 1) + '-' +
+                    fix2(now.getDate()) + '_' +
+                    fix2(now.getHours()) + '-' +
+                    fix2(now.getMinutes()) + '.json'),
+    
+                JSON.stringify(displayRoute),
+                'utf8',
+                function (err) {
+                    if (err) {
+                        console.log('write file failed', err);
+                    }
+                });
+        });
+}
 
-            JSON.stringify(displayRoute),
-            'utf8',
-            function (err) {
-                if (err) {
-                    console.log('write file failed', err);
-                }
-            });
-    });
+
+getDate(config as direction_data, goWorkPrefix);
+getDate({
+    origin: config.destination,
+    destination: config.origin,
+    ak: config.ak,
+    tactics: config.tactics
+}, goHomePrefix);
 
 export interface POI {
     lng: number;
