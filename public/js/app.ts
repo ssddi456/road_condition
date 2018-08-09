@@ -10,8 +10,8 @@ const _hour = 60 * 60 * 1000;
 const _day = 24 * _hour;
 const _5min = 5 * 60 * 1000;
 
-// const now = Math.floor(Date.now() / _5min) * _5min;
-const now = Math.floor(new Date(2018, 7 , 8, 15, 30).getTime() / _5min) * _5min;
+const now = Math.floor(Date.now() / _5min) * _5min;
+// const now = Math.floor(new Date(2018, 7 , 8, 15, 30).getTime() / _5min) * _5min;
 function getDateStr (time: number){
     const date = new Date(time);
     return date.getFullYear() + '-' +
