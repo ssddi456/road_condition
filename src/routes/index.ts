@@ -24,7 +24,7 @@ router.get('/', function (req, resp, next) {
         filter = goWorkDataFileNameReg;
     }
 
-    console.log('check type', type, filter, fs.readdirSync(dataDir)[0]);
+    console.log('check type', type, filter);
 
     const dataFiles = fs.readdirSync(dataDir).filter(x => {
         if (!x.match(filter)) {
@@ -44,7 +44,7 @@ router.get('/', function (req, resp, next) {
         .map(function (dataFileName) {
             const time = path.basename(dataFileName, path.extname(dataFileName)).match(timeReg)[0];
             const data = JSON.parse(fs.readFileSync(path.join(dataDir, dataFileName), 'utf8')) as DisplayRoute[];
-            console.log(dataFileName, time);
+
             return {
                 time,
                 data: data.map(x => {
