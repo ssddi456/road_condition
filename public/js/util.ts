@@ -12,8 +12,8 @@ export function updateChart(myChart, seriesData: seriesData[], keys: string[], o
         tooltip: {
             trigger: 'axis',
             formatter: function (params) {
-                console.log( params );
-                
+                console.log(params);
+
                 return params[0].axisValue + '<br />'
                     + params.map(x => x.marker + ' ' + (x.data / 60).toFixed(2) + 'm').join('<br />');
             },
@@ -37,21 +37,34 @@ export function updateChart(myChart, seriesData: seriesData[], keys: string[], o
 }
 
 type seriesData = {
-    data: any [],
-    markLine: {data: any[]},
+    data: any[],
+    markLine: { data: any[] },
     type: string,
     name: string,
 };
 
-export function createSeriesData(name: string, datas: DisplayRoute[][], keys: string[]): seriesData {
+export function createSeriesData(name: string, datas: { time: string, data: DisplayRoute[] }[], keys: string[]): seriesData {
     if (!datas) {
         return;
     }
 
     const markLines = [];
+    const mappedData = [];
+    for (let index = 0; index < datas.length; index++) {
+        const element = datas[index];
+        const time = element.time;
+        const idx = keys.indexOf(time);
+        if (idx != -1) {
+            mappedData[idx] = element.data[0].duration;
+        }
+    }
+
+    for (let index = 0; index < keys.length; index++) {
+        mappedData[index] = mappedData[index] || 0;
+    }
 
     return {
-        data: datas.map( x => x[0].duration ),
+        data: mappedData,
 
         markLine: {
             data: markLines

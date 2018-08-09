@@ -11,10 +11,14 @@ export type trafficData = {
     data: DisplayRoute[]
 };
 
-router.get('/', function(req, resp, next ){
+router.get('/', function (req, resp, next) {
     const type = req.query.type;
+
+    const timeFrom = req.query.from;
+    const timeTo = req.query.to;
+
     let filter: RegExp;
-    if(type == 'go_home') {
+    if (type == 'go_home') {
         filter = goHomeDataFileNameReg;
     } else {
         filter = goWorkDataFileNameReg;
@@ -22,24 +26,42 @@ router.get('/', function(req, resp, next ){
 
     console.log('check type', type, filter, fs.readdirSync(dataDir)[0]);
 
-    const dataFiles = fs.readdirSync(dataDir).filter(x => x.match(filter) )
-                        .sort()
-                        .map(function( dataFileName ){
-                            const time = path.basename(dataFileName, path.extname(dataFileName)).match(timeReg)[0];
-                            const data = JSON.parse(fs.readFileSync(path.join(dataDir, dataFileName), 'utf8'));
-                            console.log(dataFileName, time);
-                            return {
-                                time,
-                                data
-                            };
-                        });
-    if( req.query.callback ){
+    const dataFiles = fs.readdirSync(dataDir).filter(x => {
+        if (!x.match(filter)) {
+            return false;
+        }
+        const time = path.basename(x, path.extname(x)).match(timeReg)[0];
+
+        if (timeFrom && time < timeFrom) {
+            return false;
+        }
+
+        if (timeTo && time > timeTo) {
+            return false;
+        }
+        return true;
+    })
+        .map(function (dataFileName) {
+            const time = path.basename(dataFileName, path.extname(dataFileName)).match(timeReg)[0];
+            const data = JSON.parse(fs.readFileSync(path.join(dataDir, dataFileName), 'utf8')) as DisplayRoute[];
+            console.log(dataFileName, time);
+            return {
+                time,
+                data: data.map(x => {
+                    return {
+                        duration: x.duration,
+                        distance: x.distance
+                    };
+                })
+            };
+        });
+    if (req.query.callback) {
         resp.write('/**/' + req.query.callback + '(');
         resp.write(JSON.stringify(dataFiles));
         resp.write(')');
     } else {
         console.log('origins', req.headers.origin);
-        if(req.headers.origin) {
+        if (req.headers.origin) {
             resp.set({
                 'Access-Control-Allow-Origin': req.headers.origin,
                 'Access-Control-Allow-Methods': 'GET, POST',
