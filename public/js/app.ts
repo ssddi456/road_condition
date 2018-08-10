@@ -12,7 +12,7 @@ const _5min = 5 * 60 * 1000;
 
 const now = Math.floor(Date.now() / _5min) * _5min;
 // const now = Math.floor(new Date(2018, 7 , 8, 15, 30).getTime() / _5min) * _5min;
-function getDateStr (time: number){
+function getDateStr(time: number) {
     const date = new Date(time);
     return date.getFullYear() + '-' +
         fix2(date.getMonth() + 1) + '-' +
@@ -28,7 +28,7 @@ function fix2(str) {
 
 const today = getDateStr(now);
 
-const yestoday = getDateStr(now - 3 * _day );
+const yestoday = getDateStr(now - 3 * _day);
 
 const timeQuery = {
     from: yestoday,
@@ -48,8 +48,21 @@ $.getJSON('/',
     },
     function (data: trafficData[]) {
         updateChart(timeGoHomeCostChart,
-            [createTimeSeriesData('traffic', data, timeRangeKeys)],
-            timeRangeKeys);
+            [
+                createTimeSeriesData('traffic', data, timeRangeKeys),
+                createStatueSeriesData('traffic', data, timeRangeKeys),
+            ],
+            timeRangeKeys,
+            {
+                yAxis: [
+                    {
+                        type: 'value'
+                    },
+                    {
+                        type: 'value'
+                    }
+                ]
+            });
     });
 
 $.getJSON('/',
@@ -59,15 +72,19 @@ $.getJSON('/',
     },
     function (data: trafficData[]) {
         updateChart(timeGoWorkCostChart,
-            [ 
+            [
                 createTimeSeriesData('traffic', data, timeRangeKeys),
                 createStatueSeriesData('traffic', data, timeRangeKeys),
             ],
-            timeRangeKeys, {
-                yAxis: [{
-                    type: 'value'
-                }, {
-                    type: 'value'
-                }]
+            timeRangeKeys,
+            {
+                yAxis: [
+                    {
+                        type: 'value'
+                    },
+                    {
+                        type: 'value'
+                    }
+                ]
             });
     });
