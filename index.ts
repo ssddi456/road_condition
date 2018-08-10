@@ -5,7 +5,7 @@ import * as bodyParser from "body-parser";
 
 import { router as index } from './src/routes/index';
 import { compileTs } from "./src/libs/compile_ts";
-import { log } from "util";
+
 export const app = express();
 
 // view engine setup

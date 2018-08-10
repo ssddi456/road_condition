@@ -1,4 +1,4 @@
-import { updateChart, createSeriesData } from "./util";
+import { updateChart, createTimeSeriesData, createStatueSeriesData } from "./util";
 import { serveStatic } from "serve-static";
 import { trafficData } from "../../src/routes";
 
@@ -48,7 +48,7 @@ $.getJSON('/',
     },
     function (data: trafficData[]) {
         updateChart(timeGoHomeCostChart,
-            [createSeriesData('traffic', data, timeRangeKeys)],
+            [createTimeSeriesData('traffic', data, timeRangeKeys)],
             timeRangeKeys);
     });
 
@@ -59,6 +59,15 @@ $.getJSON('/',
     },
     function (data: trafficData[]) {
         updateChart(timeGoWorkCostChart,
-            [createSeriesData('traffic', data, timeRangeKeys)],
-            timeRangeKeys);
+            [ 
+                createTimeSeriesData('traffic', data, timeRangeKeys),
+                createStatueSeriesData('traffic', data, timeRangeKeys),
+            ],
+            timeRangeKeys, {
+                yAxis: [{
+                    type: 'value'
+                }, {
+                    type: 'value'
+                }]
+            });
     });

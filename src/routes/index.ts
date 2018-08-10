@@ -47,12 +47,7 @@ router.get('/', function (req, resp, next) {
 
             return {
                 time,
-                data: data.map(x => {
-                    return {
-                        duration: x.duration,
-                        distance: x.distance
-                    };
-                })
+                data,
             };
         });
     if (req.query.callback) {
