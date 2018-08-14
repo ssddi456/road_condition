@@ -15,7 +15,7 @@ export function updateChart(myChart: ECharts, seriesData: Partial<seriesData>[],
             formatter: function (params) {
 
                 return params[0].axisValue + '<br />'
-                    + params[0].data + ' min <br />'
+                    + ((params[0].data || 0) / 60).toFixed(2) + ' min <br />'
                     + params[1].data.distance + 'm';
             },
         },
