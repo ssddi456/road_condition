@@ -26,6 +26,10 @@ function fix2(str) {
     return str.length != 2 ? '0' + str : str;
 }
 
+function last<T>(arr: T[]): T {
+    return arr[arr.length - 1];
+}
+
 const today = getDateStr(now);
 
 const yestoday = getDateStr(now - 3 * _day);
@@ -35,6 +39,12 @@ const timeQuery = {
     to: today
 };
 
+
+function updateLastTime(key: string, time: trafficData){
+    const timeInSec = time.data[0].duration;
+    const timeInMin = (timeInSec/ 60).toFixed(2);
+    document.getElementById(key + '_time').innerText = timeInMin + ' min';
+}
 
 const timeRangeKeys = [];
 for (let i = 0; i <= 3 * _day / _5min; i++) {
@@ -47,6 +57,7 @@ $.getJSON('/',
         ...timeQuery
     },
     function (data: trafficData[]) {
+        updateLastTime('go_home', last(data));
         updateChart(timeGoHomeCostChart,
             [
                 createTimeSeriesData('traffic', data, timeRangeKeys),
@@ -71,6 +82,7 @@ $.getJSON('/',
         ...timeQuery
     },
     function (data: trafficData[]) {
+        updateLastTime('go_work', last(data));
         updateChart(timeGoWorkCostChart,
             [
                 createTimeSeriesData('traffic', data, timeRangeKeys),
